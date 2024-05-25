@@ -48,16 +48,16 @@ $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-scr
 
 
 info "Installing pre-built avian requirements..."
-X16R="x16r_hash-1.0-cp39-cp39-win32.whl"
-X16RT="x16rt_hash-0.1-cp39-cp39-win32.whl"
-MINOTAURX="minotaurx_hash-1.0-cp39-cp39-win32.whl"
+X16R="x16r_hash-1.0-cp310-cp310-win32.whl"
+X16RT="x16rt_hash-0.1-cp310-cp310-win32.whl"
+MINOTAURX="minotaurx_hash-1.0-cp310-cp310-win32.whl"
 
 download_if_not_exist "$CACHEDIR/$X16R" "https://raw.githubusercontent.com/AvianNetwork/electrum-wheels/main/$X16R"
-verify_hash "$CACHEDIR/$X16R" "47f78fd6bea5c53fd393184c4da8663984d2a1f4aa83c8d17395294c82cf2a06"
+verify_hash "$CACHEDIR/$X16R" "1a48b423491a2c83ee941682d618b568a12eb19be6f6fc69fa9bc92b775b6fc7"
 download_if_not_exist "$CACHEDIR/$X16RT" "https://raw.githubusercontent.com/AvianNetwork/electrum-wheels/main/$X16RT"
-verify_hash "$CACHEDIR/$X16RT" "42521c142a62f7b2bea018ebfa4eaa2ef28f26e4f788e1054ab75215d1ca1252"
+verify_hash "$CACHEDIR/$X16RT" "26737c14134358d9a876df35e20b705555f1ae0314ff62a17a2de1d9e24fbc18"
 download_if_not_exist "$CACHEDIR/$MINOTAURX" "https://raw.githubusercontent.com/AvianNetwork/electrum-wheels/main/$MINOTAURX"
-verify_hash "$CACHEDIR/$MINOTAURX" "b05650b125a0ac9b1172369c057c57f16cb6ccc89e92e17b0f4da6539b40b8a0"
+verify_hash "$CACHEDIR/$MINOTAURX" "0fd620abacc2d859b111e812810f40c1b8ad46dca549a347eb0b943243859a66"
 
 $WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$X16R"
 $WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$X16RT"
