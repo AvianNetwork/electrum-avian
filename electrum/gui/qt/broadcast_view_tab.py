@@ -79,7 +79,7 @@ class BroadcastAssetList(MyTreeView, QtEventListener):
             row_item = [QStandardItem(x) for x in labels]
             row_item[self.Columns.ASSET].setData(asset, self.ROLE_ASSET_STR)
             if asset in self.new_broadcasts:
-                row_item[self.Columns.ASSET].setForeground(QBrush(ColorScheme.BLUE.as_color()))
+                row_item[self.Columns.ASSET].setForeground(QBrush(ColorScheme.YELLOW.as_color()))
             self.model().insertRow(idx, row_item)
             self.refresh_row(asset, idx)
             if asset == self.last_selected_asset:
@@ -262,6 +262,7 @@ class ViewBroadcastTab(QWidget, Logger, MessageBoxMixin):
         scroll_box.addWidget(self.main_source_label)
         scroll_box.addWidget(self.main_source_txid)
         scroll_box.addWidget(self.main_source_button)
+        
         scroll_box.addStretch()
 
         scroll = QScrollArea()

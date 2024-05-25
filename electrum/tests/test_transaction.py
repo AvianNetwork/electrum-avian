@@ -944,7 +944,7 @@ class TestSighashTypes(ElectrumTestCase):
     txout2 = PartialTxOutput(scriptpubkey=bfh('76a9147480a33f950689af511e6e84c138dbbd3c3ee41588ac'), value=87000000)
 
     def test_check_sighash_types_sighash_all(self):
-        self.txin.sighash=Sighash.ALL
+        self.txin.sighash=Sighash.ALL_FORKID
         privkey = bfh('730fff80e1413068a05b57d6a58261f07551163369787f349438ea38ca80fac6')
         tx = PartialTransaction.from_io(inputs=[self.txin], outputs=[self.txout1,self.txout2], locktime=self.locktime, version=1, BIP69_sort=False)
         sig = tx.sign_txin(0,privkey)
@@ -969,7 +969,7 @@ class TestSighashTypes(ElectrumTestCase):
 
     @disable_ecdsa_r_value_grinding
     def test_check_sighash_types_sighash_all_anyonecanpay(self):
-        self.txin.sighash=Sighash.ALL|Sighash.ANYONECANPAY
+        self.txin.sighash=Sighash.ALL_FORKID|Sighash.ANYONECANPAY
         privkey = bfh('14af36970f5025ea3e8b5542c0f8ebe7763e674838d08808896b63c3351ffe49')
         tx = PartialTransaction.from_io(inputs=[self.txin], outputs=[self.txout1,self.txout2], locktime=self.locktime, version=1, BIP69_sort=False)
         sig = tx.sign_txin(0,privkey)

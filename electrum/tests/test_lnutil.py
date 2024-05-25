@@ -729,7 +729,7 @@ class TestLNUtil(ElectrumTestCase):
         assert len(pubkey) == 33
         assert len(privkey) == 33
         tx.sign({pubkey.hex(): (privkey[:-1], True)})
-        sighash = Sighash.to_sigbytes(Sighash.ALL).hex()
+        sighash = Sighash.to_sigbytes(Sighash.ALL_FORKID).hex()
         tx.add_signature_to_txin(txin_idx=0, signing_pubkey=remote_pubkey.hex(), sig=remote_signature + sighash)
 
     def test_get_compressed_pubkey_from_bech32(self):

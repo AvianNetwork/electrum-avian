@@ -4,7 +4,7 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, coll
 
 import sys, os
 
-PACKAGE='Electrum-Ravencoin'
+PACKAGE='Electrum-Avian'
 PYPKG='electrum'
 MAIN_SCRIPT='run_electrum'
 ICONS_FILE=PYPKG + '/gui/icons/electrum.icns'
@@ -39,6 +39,7 @@ datas = [
     (electrum + PYPKG + '/locale', PYPKG + '/locale'),
     (electrum + PYPKG + '/plugins', PYPKG + '/plugins'),
     (electrum + PYPKG + '/gui/icons', PYPKG + '/gui/icons'),
+    (electrum + PYPKG + '/gui/fonts', PYPKG + '/gui/fonts'),
 ]
 datas += collect_data_files('trezorlib')
 datas += collect_data_files('safetlib')
@@ -119,8 +120,8 @@ app = BUNDLE(
         'NSSupportsAutomaticGraphicsSwitching': 'True',
         'CFBundleURLTypes':
             [{
-                'CFBundleURLName': 'raven',
-                'CFBundleURLSchemes': ['raven', ],
+                'CFBundleURLName': 'avn',
+                'CFBundleURLSchemes': ['avn', ],
             }],
         'LSMinimumSystemVersion': '10.13.0',
         'NSCameraUsageDescription': 'Electrum would like to access the camera to scan for QR codes',

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME_ROOT=electrum-ravencoin
+NAME_ROOT=electrum-avian
 
 export PYTHONDONTWRITEBYTECODE=1  # don't create __pycache__/ folders with .pyc files
 
@@ -47,27 +47,29 @@ $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-scr
     --cache-dir "$WINE_PIP_CACHE_DIR" -r "$CONTRIB"/deterministic-build/requirements-hw.txt
 
 
-info "Installing pre-built ravencoin requirements..."
-X16R="x16r_hash-1.0-cp310-cp310-win32.whl"
-X16RV2="x16rv2_hash-1.0-cp310-cp310-win32.whl"
-KAWPOW="kawpow-0.9.4.4-cp310-cp310-win32.whl"
+info "Installing pre-built avian requirements..."
+X16R="x16r_hash-1.0-cp39-cp39-win32.whl"
+X16RT="x16rt_hash-0.1-cp39-cp39-win32.whl"
+MINOTAURX="minotaurx_hash-1.0-cp39-cp39-win32.whl"
 
-download_if_not_exist "$CACHEDIR/$X16R" "https://raw.githubusercontent.com/kralverde/electrum-ravencoin-wheels/master/$X16R"
-verify_hash "$CACHEDIR/$X16R" "65510849dbcc7ae174de9cd33c3c25a02b6fa83a83cd1697b07fbd1e2e039dd8"
-download_if_not_exist "$CACHEDIR/$X16RV2" "https://raw.githubusercontent.com/kralverde/electrum-ravencoin-wheels/master/$X16RV2"
-verify_hash "$CACHEDIR/$X16RV2" "190c8c914646045787e4e811ba9f75b6e948cc868d3b81dfab2b28ad12c94b44"
-download_if_not_exist "$CACHEDIR/$KAWPOW" "https://raw.githubusercontent.com/kralverde/electrum-ravencoin-wheels/master/$KAWPOW"
-verify_hash "$CACHEDIR/$KAWPOW" "dfef28523674c3592df91eefecd7826e65c3bf90a95ec9e2fa4cb36027fa975a"
+download_if_not_exist "$CACHEDIR/$X16R" "https://raw.githubusercontent.com/AvianNetwork/electrum-wheels/main/$X16R"
+verify_hash "$CACHEDIR/$X16R" "47f78fd6bea5c53fd393184c4da8663984d2a1f4aa83c8d17395294c82cf2a06"
+download_if_not_exist "$CACHEDIR/$X16RT" "https://raw.githubusercontent.com/AvianNetwork/electrum-wheels/main/$X16RT"
+verify_hash "$CACHEDIR/$X16RT" "42521c142a62f7b2bea018ebfa4eaa2ef28f26e4f788e1054ab75215d1ca1252"
+download_if_not_exist "$CACHEDIR/$MINOTAURX" "https://raw.githubusercontent.com/AvianNetwork/electrum-wheels/main/$MINOTAURX"
+verify_hash "$CACHEDIR/$MINOTAURX" "b05650b125a0ac9b1172369c057c57f16cb6ccc89e92e17b0f4da6539b40b8a0"
 
 $WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$X16R"
-$WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$X16RV2"
-$WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$KAWPOW"
-
+$WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$X16RT"
+$WINE_PYTHON -m pip install --no-warn-script-location --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$MINOTAURX"
 
 pushd $WINEPREFIX/drive_c/electrum
 # see https://github.com/pypa/pip/issues/2195 -- pip makes a copy of the entire directory
 info "Pip installing Electrum. This might take a long time if the project folder is large."
 $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location .
+# pyinstaller needs to be able to "import electrum", for which we need libsecp256k1:
+# (or could try "pip install -e" instead)
+cp electrum/libsecp256k1-*.dll "$WINEPREFIX/drive_c/python3/Lib/site-packages/electrum/"
 popd
 
 
@@ -84,7 +86,6 @@ popd
 
 info "building NSIS installer"
 # $VERSION could be passed to the electrum.nsi script, but this would require some rewriting in the script itself.
-
 makensis -DPRODUCT_VERSION=$VERSION electrum.nsi
 
 cd dist

@@ -39,7 +39,7 @@ from typing import Optional, TYPE_CHECKING, Sequence, List, Union, Dict, Set
 import concurrent.futures
 from collections import defaultdict
 
-from PyQt5.QtGui import QPixmap, QKeySequence, QIcon, QCursor, QFont, QFontMetrics
+from PyQt5.QtGui import QPixmap, QKeySequence, QIcon, QCursor, QFont, QFontDatabase, QFontMetrics
 from PyQt5.QtCore import Qt, QRect, QStringListModel, QSize, pyqtSignal
 from PyQt5.QtWidgets import (QMessageBox, QSystemTrayIcon, QTabWidget,
                              QMenuBar, QFileDialog, QCheckBox, QLabel,
@@ -171,7 +171,10 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
 
     def __init__(self, gui_object: 'ElectrumGui', wallet: Abstract_Wallet):
         QMainWindow.__init__(self)
+        # QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), '../fonts/PixeloidSans.otf').replace(os.sep, '/'))       
+        # QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), '../fonts/PixeloidSans-Bold.otf').replace(os.sep, '/'))       
         self.gui_object = gui_object
+        self.setObjectName("main_window_container")
         self.config = config = gui_object.config  # type: SimpleConfig
         self.gui_thread = gui_object.gui_thread
         assert wallet, "no wallet"
@@ -221,6 +224,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         self.broadcast_view_tab = self.create_view_broadcasts_tab()
         self.atomic_swap_tab = self.create_atomic_swap_tab()
         #self.channels_tab = self.create_channels_tab()
+        tabs.setObjectName("main_window_nav_bar")
         tabs.addTab(self.create_history_tab(), read_QIcon("tab_history.png"), _('History'))
         tabs.addTab(self.send_tab, read_QIcon("tab_send.png"), _('Send'))
         tabs.addTab(self.receive_tab, read_QIcon("tab_receive.png"), _('Receive'))
@@ -234,7 +238,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
                 tabs.addTab(tab, icon, description.replace("&", ""))
 
         add_optional_tab(tabs, self.broadcast_view_tab, read_QIcon("broadcast_recv.png"), _("&Broadcasts"))
-        add_optional_tab(tabs, self.atomic_swap_tab, read_QIcon("swap.png"), _("A&tomic Swaps"))
+        add_optional_tab(tabs, self.atomic_swap_tab, read_QIcon("atomicswap.png"), _("A&tomic Swaps"))
         add_optional_tab(tabs, self.addresses_tab, read_QIcon("tab_addresses.png"), _("A&ddresses"))
         #add_optional_tab(tabs, self.channels_tab, read_QIcon("lightning.png"), _("Channels"))
         add_optional_tab(tabs, self.utxo_tab, read_QIcon("tab_coins.png"), _("Co&ins"))
@@ -245,6 +249,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         central_widget = QScrollArea()
+        central_widget.setObjectName("central_widget")
         vbox = QVBoxLayout(central_widget)
         vbox.setContentsMargins(0, 0, 0, 0)
         vbox.addWidget(tabs)
@@ -573,7 +578,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
 
     @classmethod
     def get_app_name_and_version_str(cls) -> str:
-        name = "Electrum Ravencoin"
+        name = "Electrum Avian"
         if constants.net.TESTNET:
             name += " " + constants.net.NET_NAME.capitalize()
         return f"{name} {ELECTRUM_VERSION}"
@@ -822,7 +827,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         help_menu = menubar.addMenu(_("&Help"))
         help_menu.addAction(_("&About"), self.show_about)
         help_menu.addAction(_("&Check for updates"), self.show_update_check)
-        help_menu.addAction(_("&Official website"), lambda: webopen("https://github.com/Electrum-RVN-SIG/electrum-ravencoin"))
+        help_menu.addAction(_("&Official website"), lambda: webopen("https://www.avn.network/"))
         help_menu.addSeparator()
         help_menu.addAction(_("&Documentation"), lambda: webopen("http://docs.electrum.org/")).setShortcut(QKeySequence.HelpContents)
         #if not constants.net.TESTNET:
@@ -837,7 +842,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         d = self.network.get_donation_address()
         if d:
             host = self.network.get_parameters().server.host
-            self.handle_payment_identifier('raven:%s?message=donation for %s' % (d, host))
+            self.handle_payment_identifier('avn:%s?message=donation for %s' % (d, host))
         else:
             self.show_error(_('No donation address for this server'))
 
@@ -869,7 +874,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
     def show_report_bug(self):
         msg = ' '.join([
             _("Please report any bugs as issues on github:<br/>"),
-            f'''<a href="{constants.GIT_REPO_ISSUES_URL}">{constants.GIT_REPO_ISSUES_URL}</a><br/><br/>''',
+            f'''<a href="{constants.GIT_REPO_ISSUES_URL}" style="color: #BE840A">{constants.GIT_REPO_ISSUES_URL}</a><br/><br/>''',
             _("Before reporting a bug, upgrade to the most recent version of Electrum (latest release or git HEAD), and include the version number in your report."),
             _("Try to explain not only what the bug is, but how it occurs.")
          ])
@@ -1132,6 +1137,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         self.history_list = l = HistoryList(self, self.history_model)
         self.history_model.set_view(self.history_list)
         l.searchable_list = l
+        l.setObjectName("history_container")
         tab = self.create_list_tab(self.history_list)
         return tab
 
@@ -1213,6 +1219,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         from .broadcast_view_tab import ViewBroadcastTab
         tab = ViewBroadcastTab(self)
         tab.is_shown_cv = self.config.cv.GUI_QT_SHOW_TAB_BROADCASTS
+        tab.setObjectName("broadcast_container")
         return tab
 
     def create_atomic_swap_tab(self):
@@ -1492,6 +1499,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         w.searchable_list = l
         vbox = QVBoxLayout()
         w.setLayout(vbox)
+        w.setObjectName("receive_container")
         #vbox.setContentsMargins(0, 0, 0, 0)
         #vbox.setSpacing(0)
         toolbar = l.create_toolbar(self.config)
@@ -1504,21 +1512,24 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
 
     def create_addresses_tab(self):
         from .address_list import AddressList
-        self.address_list = AddressList(self)
-        tab =  self.create_list_tab(self.address_list)
+        self.address_list = l = AddressList(self)
+        l.setObjectName("addresses_container")
+        tab =  self.create_list_tab(l)
         tab.is_shown_cv = self.config.cv.GUI_QT_SHOW_TAB_ADDRESSES
         return tab
 
     def create_utxo_tab(self):
         from .utxo_list import UTXOList
-        self.utxo_list = UTXOList(self)
-        tab = self.create_list_tab(self.utxo_list)
+        self.utxo_list = l = UTXOList(self)
+        l.setObjectName("utxo_container")
+        tab = self.create_list_tab(l)
         tab.is_shown_cv = self.config.cv.GUI_QT_SHOW_TAB_UTXO
         return tab
 
     def create_contacts_tab(self):
         from .contact_list import ContactList
         self.contact_list = l = ContactList(self)
+        l.setObjectName("contacts_container")
         tab = self.create_list_tab(l)
         tab.is_shown_cv = self.config.cv.GUI_QT_SHOW_TAB_CONTACTS
         return tab
@@ -1656,6 +1667,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         from .console import Console
         self.console = console = Console()
         console.is_shown_cv = self.config.cv.GUI_QT_SHOW_TAB_CONSOLE
+        console.setObjectName("console_container")
         return console
 
     def update_console(self):
@@ -1706,6 +1718,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         sb = QStatusBar()
         self.balance_label = BalanceToolButton()
         self.balance_label.setText("Loading wallet...")
+        self.balance_label.setObjectName("main_window_balance")
         self.balance_label.setAutoRaise(True)
         self.balance_label.clicked.connect(self.show_balance_dialog)
         sb.addWidget(self.balance_label)
@@ -1715,7 +1728,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         sb.setFixedHeight(sb_height)
 
         # remove border of all items in status bar
-        self.setStyleSheet("QStatusBar::item { border: 0px;} ")
+        #self.setStyleSheet("QStatusBar::item { border: 0px;} ")
 
         self.search_box = QLineEdit()
         self.search_box.textChanged.connect(self.do_search)

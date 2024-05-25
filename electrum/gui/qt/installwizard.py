@@ -88,9 +88,9 @@ WIF_HELP_TEXT = (
     + "\n\n"
     + _("For example")
     + ":\n"
-    + "p2pkh:Ky3aZfPJuVT...       \t-> RQmm26vQk..."
+    + "p2pkh:L3fBEi4EBSz...       \t-> RJ3vbWveY..."
 )
-# note: full key is Ky3aZfPJuVTh3QL8PwkR6PbbKXWfFhwo7aPDY7MG3keEY2dycwYv
+# note: full key is L3fBEi4EBSzsgoWVYR8dDv5pnbP41tAqmBL9pq6PtnAooNscjXdH
 MSG_PASSPHRASE_WARN_ISSUE4566 = (
     _("Warning")
     + ": "

@@ -53,7 +53,7 @@ from . import x509
 from . import pem
 from . import version
 from . import blockchain
-from .blockchain import Blockchain, HEADER_SIZE, LEGACY_HEADER_SIZE, NotEnoughHeaders
+from .blockchain import Blockchain, HEADER_SIZE, NotEnoughHeaders
 from . import bitcoin
 from . import constants
 from .i18n import _
@@ -628,11 +628,6 @@ class Interface(Logger):
     async def request_chunk(self, height: int, tip=None, *, can_return_early=False):
         if not is_non_negative_integer(height):
             raise Exception(f"{repr(height)} is not a block height")
-        
-        # For chunks within DGW checkpoints, we need to reset to start of 2016 chunks
-        if constants.net.DGW_CHECKPOINTS_START <= height <= constants.net.max_checkpoint():
-            #print(f'interface request chunk, setting height from {height}')
-            height = (height // constants.net.DGW_CHECKPOINTS_SPACING) * constants.net.DGW_CHECKPOINTS_SPACING
 
         ret = False
         for mi, ma in self._requested_chunks:
@@ -659,10 +654,9 @@ class Interface(Logger):
         assert_non_negative_integer(res['count'])
         assert_non_negative_integer(res['max'])
         assert_hex_str(res['hex'])
-        if height + size >= constants.net.KawpowActivationHeight and len(res['hex']) != HEADER_SIZE * 2 * res['count']:
+        if HEADER_SIZE * 2 * res['count'] < len(res['hex']) \
+                or len(res['hex']) < HEADER_SIZE * 2 * res['count']:
             raise RequestCorrupted('inconsistent chunk hex and count')
-        if height + size < constants.net.KawpowActivationHeight and len(res['hex']) != LEGACY_HEADER_SIZE * 2 * res['count']:
-            raise RequestCorrupted('inconsistent chunk hex and count (legacy)')
         # we never request more than 2016 headers, but we enforce those fit in a single response
         if res['max'] < 2016:
             raise RequestCorrupted(f"server uses too low 'max' count for block.headers: {res['max']} < 2016")
@@ -807,12 +801,6 @@ class Interface(Logger):
         while last is None or height <= next_height:
             prev_last, prev_height = last, height
             if next_height > height + 10:
-
-                if (not got_less_than_spacing and height >= constants.net.DGW_CHECKPOINTS_START):
-                    # For DGW, ensure we start and get a chunk amount so we can properly match
-                    # the start and end block's targets
-                    height = (height // constants.net.DGW_CHECKPOINTS_SPACING) * constants.net.DGW_CHECKPOINTS_SPACING
-
                 could_connect, num_headers = await self.request_chunk(height, next_height)
 
                 if not could_connect:
@@ -935,14 +923,7 @@ class Interface(Logger):
                 checkp = True
             header = await self.get_block_header(height, 'backward')
             chain = blockchain.check_header(header) if 'mock' not in header else header['mock']['check'](header)
-            can_connect = False
-            try:
-                can_connect = blockchain.can_connect(header) if 'mock' not in header else header['mock']['connect'](height)
-            except NotEnoughHeaders:
-                if height <= constants.net.max_checkpoint():
-                    self.logger.info('not enough headers; requesting chunk')
-                    can_connect, count = await self.request_chunk(height)
-                    assert count == constants.net.DGW_CHECKPOINTS_SPACING, 'Bad initial header request'
+            can_connect = blockchain.can_connect(header) if 'mock' not in header else header['mock']['connect'](height)
             if chain or can_connect:
                 return False
             if checkp:

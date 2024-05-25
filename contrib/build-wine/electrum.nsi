@@ -6,9 +6,9 @@
 ;--------------------------------
 ;Variables
 
-  !define PRODUCT_NAME "Electrum Ravencoin"
-  !define PRODUCT_WEB_SITE "https://github.com/Electrum-RVN-SIG/electrum-ravencoin"
-  !define PRODUCT_PUBLISHER "The Ravencoin Community"
+  !define PRODUCT_NAME "Electrum Avian"
+  !define PRODUCT_WEB_SITE "https://github.com/AvianNetwork/electrum-avian"
+  !define PRODUCT_PUBLISHER "Avian Network"
   !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 ;--------------------------------
@@ -16,7 +16,7 @@
 
   ;Name and file
   Name "${PRODUCT_NAME}"
-  OutFile "dist/electrum-ravencoin-setup.exe"
+  OutFile "dist/electrum-avian-setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
@@ -46,7 +46,7 @@
   SetCompressorDictSize 64
 
   ;Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') in the bottom of the install window. Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space).
-  BrandingText "${PRODUCT_NAME} Installer ${PRODUCT_VERSION}"
+  BrandingText "${PRODUCT_NAME} Installer v${PRODUCT_VERSION}"
 
   ;Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the Name command. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
   Caption "${PRODUCT_NAME}"
@@ -122,25 +122,25 @@ Section
 
   ;Create desktop shortcut
   DetailPrint "Creating desktop shortcut..."
-  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe" ""
+  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe" ""
 
   ;Create start-menu items
   DetailPrint "Creating start-menu items..."
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe" "" "$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe" 0
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe" 0
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe" "" "$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe" 0
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe" 0
 
 
   ;Links bitcoin: and lightning: URIs to Electrum
-  WriteRegStr HKCU "Software\Classes\raven" "" "URL:raven Protocol"
-  WriteRegStr HKCU "Software\Classes\raven" "URL Protocol" ""
-  WriteRegStr HKCU "Software\Classes\raven" "DefaultIcon" "$\"$INSTDIR\electrum.ico, 0$\""
-  WriteRegStr HKCU "Software\Classes\raven\shell\open\command" "" "$\"$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe$\" $\"%1$\""
+  WriteRegStr HKCU "Software\Classes\avian" "" "URL:avian Protocol"
+  WriteRegStr HKCU "Software\Classes\avian" "URL Protocol" ""
+  WriteRegStr HKCU "Software\Classes\avian" "DefaultIcon" "$\"$INSTDIR\electrum.ico, 0$\""
+  WriteRegStr HKCU "Software\Classes\avian\shell\open\command" "" "$\"$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe$\" $\"%1$\""
   ;WriteRegStr HKCU "Software\Classes\lightning" "" "URL:lightning Protocol"
   ;WriteRegStr HKCU "Software\Classes\lightning" "URL Protocol" ""
   ;WriteRegStr HKCU "Software\Classes\lightning" "DefaultIcon" "$\"$INSTDIR\electrum.ico, 0$\""
-  ;WriteRegStr HKCU "Software\Classes\lightning\shell\open\command" "" "$\"$INSTDIR\electrum-ravencoin-${PRODUCT_VERSION}.exe$\" $\"%1$\""
+  ;WriteRegStr HKCU "Software\Classes\lightning\shell\open\command" "" "$\"$INSTDIR\electrum-avian-${PRODUCT_VERSION}.exe$\" $\"%1$\""
 
   ;Adds an uninstaller possibility to Windows Uninstall or change a program section
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"

@@ -931,7 +931,7 @@ class SimpleConfig(Logger):
     GUI_NAME = ConfigVar('gui', default='qt', type_=str)
     GUI_LAST_WALLET = ConfigVar('gui_last_wallet', default=None, type_=str)
 
-    GUI_QT_COLOR_THEME = ConfigVar('qt_gui_color_theme', default='default', type_=str)
+    GUI_QT_COLOR_THEME = ConfigVar('qt_gui_color_theme', default='dark', type_=str)
     GUI_QT_DARK_TRAY_ICON = ConfigVar('dark_icon', default=False, type_=bool)
     GUI_QT_WINDOW_IS_MAXIMIZED = ConfigVar('is_maximized', default=False, type_=bool)
     GUI_QT_HIDE_ON_STARTUP = ConfigVar('hide_gui', default=False, type_=bool)
@@ -960,7 +960,7 @@ class SimpleConfig(Logger):
     BTC_AMOUNTS_PREC_POST_SAT = ConfigVar('amt_precision_post_satoshi', default=0, type_=int)
     BTC_AMOUNTS_ADD_THOUSANDS_SEP = ConfigVar('amt_add_thousands_sep', default=False, type_=bool)
 
-    BLOCK_EXPLORER = ConfigVar('block_explorer', default='rvn.cryptoscope.io', type_=str)
+    BLOCK_EXPLORER = ConfigVar('block_explorer', default='explorer.avn.network', type_=str)
     BLOCK_EXPLORER_CUSTOM = ConfigVar('block_explorer_custom', default=None)
     IPFS_EXPLORER = ConfigVar('ipfs_explorer', default='ipfs.io', type_=str)
     IPFS_EXPLORER_CUSTOM = ConfigVar('ipfs_explorer_custom', default=None)
@@ -982,7 +982,7 @@ class SimpleConfig(Logger):
     WALLET_BACKUP_DIRECTORY = ConfigVar('backup_dir', default=None, type_=str)
     CONFIG_PIN_CODE = ConfigVar('pin_code', default=None, type_=str)
     QR_READER_FLIP_X = ConfigVar('qrreader_flip_x', default=True, type_=bool)
-    WIZARD_DONT_CREATE_SEGWIT = ConfigVar('nosegwit', default=True, type_=bool) # no segwit for RVN
+    WIZARD_DONT_CREATE_SEGWIT = ConfigVar('nosegwit', default=True, type_=bool) # no segwit for AVN
     CONFIG_FORGET_CHANGES = ConfigVar('forget_config', default=False, type_=bool)
 
     # submarine swap server

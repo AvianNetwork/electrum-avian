@@ -40,7 +40,7 @@ except Exception as e:
         "Error: Could not import PyQt5 on Linux systems, "
         "you may try 'sudo apt-get install python3-pyqt5'") from e
 
-from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtGui import QGuiApplication, QFontDatabase
 from PyQt5.QtWidgets import (QApplication, QSystemTrayIcon, QWidget, QMenu,
                              QMessageBox)
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer, Qt
@@ -103,7 +103,6 @@ class QElectrumApplication(QApplication):
     alias_received_signal = pyqtSignal()
 
 
-
 class ElectrumGui(BaseElectrumGui, Logger):
 
     network_dialog: Optional['NetworkDialog']
@@ -122,7 +121,7 @@ class ElectrumGui(BaseElectrumGui, Logger):
         if hasattr(QtCore.Qt, "AA_ShareOpenGLContexts"):
             QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
         if hasattr(QGuiApplication, 'setDesktopFileName'):
-            QGuiApplication.setDesktopFileName('electrum-ravencoin.desktop')
+            QGuiApplication.setDesktopFileName('electrum-avian.desktop')
         self.gui_thread = threading.current_thread()
         self.windows = []  # type: List[ElectrumWindow]
         self.efilter = OpenFileEventFilter(self.windows)
@@ -153,31 +152,20 @@ class ElectrumGui(BaseElectrumGui, Logger):
 
     def _init_tray(self):
         self.tray = QSystemTrayIcon(self.tray_icon(), None)
-        self.tray.setToolTip('Electrum')
+        self.tray.setToolTip('Avian Electrum')
         self.tray.activated.connect(self.tray_activated)
         self.build_tray_menu()
         self.tray.show()
 
     def reload_app_stylesheet(self):
-        """Set the Qt stylesheet and custom colors according to the user-selected
-        light/dark theme.
-        TODO this can ~almost be used to change the theme at runtime (without app restart),
-             except for util.ColorScheme... widgets already created with colors set using
-             ColorSchemeItem.as_stylesheet() and similar will not get recolored.
-             See e.g.
-             - in Coins tab, the color for "frozen" UTXOs, or
-             - in TxDialog, the receiving/change address colors
-        """
         use_dark_theme = self.config.GUI_QT_COLOR_THEME == 'dark'
+        self.app.setStyle('Fusion')        
         if use_dark_theme:
-            try:
-                import qdarkstyle
-                self.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-            except BaseException as e:
-                use_dark_theme = False
-                self.logger.warning(f'Error setting dark theme: {repr(e)}')
+            from .dark_avian_style import avian_stylesheet
+            self.app.setStyleSheet(avian_stylesheet)
         else:
-            self.app.setStyleSheet(self._default_qtstylesheet)
+            from .avian_style import avian_stylesheet
+            self.app.setStyleSheet(avian_stylesheet)
         # Apply any necessary stylesheet patches
         patch_qt_stylesheet(use_dark_theme=use_dark_theme)
         # Even if we ourselves don't set the dark theme,
@@ -206,7 +194,7 @@ class ElectrumGui(BaseElectrumGui, Logger):
             submenu = m.addMenu(name)
             submenu.addAction(_("Show/Hide"), window.show_or_hide)
             submenu.addAction(_("Close"), window.close)
-        m.addAction(_("Dark/Light"), self.toggle_tray_icon)
+        #m.addAction(_("Dark/Light"), self.toggle_tray_icon)
         m.addSeparator()
         m.addAction(_("Exit Electrum"), self.app.quit)
 
@@ -454,6 +442,9 @@ class ElectrumGui(BaseElectrumGui, Logger):
         signal.signal(signal.SIGINT, lambda *args: self.app.quit())
         # hook for crash reporter
         Exception_Hook.maybe_setup(config=self.config)
+        # QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), '../fonts/PixeloidSans.otf').replace(os.sep, '/'))       
+        # QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), '../fonts/PixeloidSans-Bold.otf').replace(os.sep, '/'))       
+
         # start network, and maybe show first-start network-setup
         try:
             self.init_network()

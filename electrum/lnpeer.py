@@ -2271,11 +2271,11 @@ class Peer(Logger):
         closing_tx.add_signature_to_txin(
             txin_idx=0,
             signing_pubkey=chan.config[LOCAL].multisig_key.pubkey.hex(),
-            sig=(der_sig_from_sig_string(our_sig) + Sighash.to_sigbytes(Sighash.ALL)).hex())
+            sig=(der_sig_from_sig_string(our_sig) + Sighash.to_sigbytes(Sighash.ALL_FORKID)).hex())
         closing_tx.add_signature_to_txin(
             txin_idx=0,
             signing_pubkey=chan.config[REMOTE].multisig_key.pubkey.hex(),
-            sig=(der_sig_from_sig_string(their_sig) + Sighash.to_sigbytes(Sighash.ALL)).hex())
+            sig=(der_sig_from_sig_string(their_sig) + Sighash.to_sigbytes(Sighash.ALL_FORKID)).hex())
         # save local transaction and set state
         try:
             self.lnworker.wallet.adb.add_transaction(closing_tx)

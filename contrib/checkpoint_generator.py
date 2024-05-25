@@ -6,9 +6,10 @@ import urllib.request, urllib.error, urllib.parse
 
 if len(argv) < 3:
     print('Arguments: <rpc_username> <rpc_password> [<rpc_port>]')
-    exit(1)
+    sys.exit(1)
 
-def bits_to_target(bits: int) -> int:
+# From electrum.
+def bits_to_target(bits):
         # arith_uint256::SetCompact in Bitcoin Core
         if not (0 <= bits < (1 << 32)):
             raise Exception(f"bits should be uint32. got {bits!r}")
@@ -39,7 +40,7 @@ def rpc(method, params):
     data_json = dumps(data)
     username = argv[1]
     password = argv[2]
-    port = 8766
+    port = 7896
     if len(argv) > 3:
         port = argv[3]
     url = "http://127.0.0.1:{}/".format(port)
@@ -53,34 +54,27 @@ def rpc(method, params):
 
     return loads(json_response)
 
+# Electrum checkpoints are blocks 2015, 2015 + 2016, 2015 + 2016*2, ...
+i = 2015
 INTERVAL = 2016
-START = 168 * INTERVAL
-
-curr_height = START
 
 checkpoints = []
 block_count = int(rpc('getblockcount', [])['result'])
 print(('Blocks: {}'.format(block_count)))
 while True:
-    print(curr_height)
-    h = rpc('getblockhash', [curr_height])['result']
+    h = rpc('getblockhash', [i])['result']
     block = rpc('getblock', [h])['result']
 
-    h2 = rpc('getblockhash', [curr_height + INTERVAL - 1])['result']
-    block2 = rpc('getblock', [h2])['result']
-
     checkpoints.append([
-        [block['hash'],
-        bits_to_target(int(block['bits'], 16))],
-        [block2['hash'],
-        bits_to_target(int(block2['bits'], 16))]
+        block['hash'],
+        bits_to_target(int(block['bits'], 16))
     ])
 
-    curr_height += INTERVAL
-    if curr_height > block_count - INTERVAL:
+    i += INTERVAL
+    if i > block_count:
         print('Done.')
         break
 
-with open('checkpoints_dgw.json', 'w+') as f:
+with open('checkpoints_output.json', 'w+') as f:
     f.write(dumps(checkpoints, indent=4, separators=(',', ':')))
-
+    

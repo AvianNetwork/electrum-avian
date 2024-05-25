@@ -213,7 +213,7 @@ class TrezorPlugin(HW_PluginBase):
         return client
 
     def get_coin_name(self):
-        return "Ravencoin Testnet" if constants.net.TESTNET else "Ravencoin"
+        return "Avian Testnet" if constants.net.TESTNET else "Avian"
 
     def initialize_device(self, device_id, wizard, handler):
         # Initialization method
@@ -373,7 +373,7 @@ class TrezorPlugin(HW_PluginBase):
                                        amount_unit=self.get_trezor_amount_unit(),
                                        serialize=False,
                                        prev_txes=prev_tx)
-        sighash = Sighash.to_sigbytes(Sighash.ALL).hex()
+        sighash = Sighash.to_sigbytes(Sighash.ALL_FORKID).hex()
         signatures = [((x.hex() + sighash) if x else None) for x in signatures]
         tx.update_signatures(signatures, wallet)
 

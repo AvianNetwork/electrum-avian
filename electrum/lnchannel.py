@@ -1158,7 +1158,7 @@ class Channel(AbstractChannel):
         data = self.config[LOCAL].current_htlc_signatures
         htlc_sigs = list(chunks(data, 64))
         htlc_sig = htlc_sigs[htlc_relative_idx]
-        remote_htlc_sig = ecc.der_sig_from_sig_string(htlc_sig) + Sighash.to_sigbytes(Sighash.ALL)
+        remote_htlc_sig = ecc.der_sig_from_sig_string(htlc_sig) + Sighash.to_sigbytes(Sighash.ALL_FORKID)
         return remote_htlc_sig
 
     def revoke_current_commitment(self):
@@ -1615,7 +1615,7 @@ class Channel(AbstractChannel):
         raise NotImplementedError('wallet insert')
         tx.sign({self.config[LOCAL].multisig_key.pubkey.hex(): (self.config[LOCAL].multisig_key.privkey, True)})
         remote_sig = self.config[LOCAL].current_commitment_signature
-        remote_sig = ecc.der_sig_from_sig_string(remote_sig) + Sighash.to_sigbytes(Sighash.ALL)
+        remote_sig = ecc.der_sig_from_sig_string(remote_sig) + Sighash.to_sigbytes(Sighash.ALL_FORKID)
         tx.add_signature_to_txin(txin_idx=0,
                                  signing_pubkey=self.config[REMOTE].multisig_key.pubkey.hex(),
                                  sig=remote_sig.hex())

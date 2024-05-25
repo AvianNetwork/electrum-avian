@@ -42,8 +42,8 @@ def read_json(filename, default):
     return r
 
 
-GIT_REPO_URL = "https://github.com/Electrum-RVN-SIG/electrum-ravencoin"
-GIT_REPO_ISSUES_URL = "https://github.com/Electrum-RVN-SIG/electrum-ravencoin/issues"
+GIT_REPO_URL = "https://github.com/AvianNetwork/avian-electrum-wallet"
+GIT_REPO_ISSUES_URL = "https://github.com/AvianNetwork/avian-electrum-wallet/issues"
 BIP39_WALLET_FORMATS = read_json('bip39_wallet_formats.json', [])
 
 
@@ -92,13 +92,8 @@ class AbstractNet:
     LN_REALM_BYTE: int
 
     @classmethod
-    def max_legacy_checkpoint(cls) -> int:
-        return max(0, len(cls.CHECKPOINTS) * 2016 - 1)
-
-    @classmethod
     def max_checkpoint(cls) -> int:
-        # DGW Checkpoints start at height 400,000 and are every 2016 blocks after
-        return max(0, cls.DGW_CHECKPOINTS_START + (len(cls.DGW_CHECKPOINTS) * cls.DGW_CHECKPOINTS_SPACING) - 1)
+        return max(0, len(cls.CHECKPOINTS) * 2016 - 1)
 
     @classmethod
     def rev_genesis_bytes(cls) -> bytes:
@@ -106,7 +101,7 @@ class AbstractNet:
         return bytes.fromhex(bitcoin.rev_hex(cls.GENESIS))
 
 
-class RavencoinMainnet(AbstractNet):
+class AvianMainnet(AbstractNet):
     NET_NAME = "mainnet"
     TESTNET = False
     WIF_PREFIX = 128
@@ -114,25 +109,17 @@ class RavencoinMainnet(AbstractNet):
     ADDRTYPE_P2SH = 122
     ADDRTYPE_P2SH_ALT = 122
     MATURE = 60
-    SEGWIT_HRP = "rc"
+    SEGWIT_HRP = "mc"
     BOLT11_HRP = SEGWIT_HRP
-    GENESIS = "0000006b444bc2f2ffe627be9d9e7e7a0730000870ef6eb6da46c8eae389df90"
+    GENESIS = "000000cdb10fc01df7fba251f2168ef7cd7854b571049db4902c315694461dd0"
     DEFAULT_PORTS = {'t': '50001', 's': '50002'}
     DEFAULT_SERVERS = read_json('servers.json', {})
     CHECKPOINTS = read_json('checkpoints.json', [])
-    DGW_CHECKPOINTS = read_json('checkpoints_dgw.json', [])
-    DGW_CHECKPOINTS_SPACING = 2016
-    DGW_CHECKPOINTS_START = 168 * DGW_CHECKPOINTS_SPACING  #338_688, DGW starts at 338_778
 
-    X16Rv2ActivationTS = 1569945600
-    KawpowActivationTS = 1588788000
-    KawpowActivationHeight = 1219736
-    nDGWActivationBlock = 338778
-
-    DEFAULT_MESSAGE_CHANNELS = ['ELECTRUM_RAVENCOIN~notification']
+    DEFAULT_MESSAGE_CHANNELS = ['AVIAN_ELECTRUM~notification']
     ASSET_PREFIX = b'rvn'
-    SHORT_NAME = 'RVN'
-    LONG_NAME = 'Ravencoin'
+    SHORT_NAME = 'AVN'
+    LONG_NAME = 'Avian'
 
     MULTISIG_ASSETS = False
 
@@ -152,7 +139,7 @@ class RavencoinMainnet(AbstractNet):
         'p2wsh': 0x02aa7ed3,  # Zpub
     }
     XPUB_HEADERS_INV = inv_dict(XPUB_HEADERS)
-    BIP44_COIN_TYPE = 175
+    BIP44_COIN_TYPE = 921
 
     BURN_AMOUNTS = BurnAmounts(
         IssueAssetBurnAmount=500,
@@ -180,82 +167,6 @@ class RavencoinMainnet(AbstractNet):
     )
 
 
-class RavencoinTestnet(AbstractNet):
-    NET_NAME = "testnet"
-    BIP44_COIN_TYPE = 1
-    LN_REALM_BYTE = 0
-    LN_DNS_SEEDS = [
-    ]
-    TESTNET = True
-    WIF_PREFIX = 239
-    ADDRTYPE_P2PKH = 111
-    ADDRTYPE_P2SH = 196
-    ADDRTYPE_P2SH_ALT = 196
-    MATURE = 60
-    SEGWIT_HRP = "tc"
-    BOLT11_HRP = SEGWIT_HRP
-    GENESIS = "000000ecfc5e6324a079542221d00e10362bdc894d56500c414060eea8a3ad5a"
-    DEFAULT_PORTS = {'t': '51001', 's': '51002'}
-    DEFAULT_SERVERS = read_json('servers_testnet.json', {})
-    CHECKPOINTS = []
-    DGW_CHECKPOINTS = read_json('checkpoints_dgw_testnet.json', [])
-    DGW_CHECKPOINTS_SPACING = 2016
-    DGW_CHECKPOINTS_START = 0
-
-    X16Rv2ActivationTS = 1567533600
-    KawpowActivationTS = 1585159200
-    KawpowActivationHeight = 231544
-    nDGWActivationBlock = 1
-
-    DEFAULT_MESSAGE_CHANNELS = []
-    ASSET_PREFIX = b'rvn'
-    SHORT_NAME = 'tRVN'
-    LONG_NAME = 'Ravencoin'
-    MULTISIG_ASSETS = False
-    
-    XPRV_HEADERS = {
-        'standard': 0x04358394,  # tprv
-        'p2wpkh-p2sh': 0x044a4e28,  # uprv
-        'p2wsh-p2sh': 0x024285b5,  # Uprv
-        'p2wpkh': 0x045f18bc,  # vprv
-        'p2wsh': 0x02575048,  # Vprv
-    }
-    XPRV_HEADERS_INV = inv_dict(XPRV_HEADERS)
-    XPUB_HEADERS = {
-        'standard': 0x043587cf,  # tpub
-        'p2wpkh-p2sh': 0x044a5262,  # upub
-        'p2wsh-p2sh': 0x024289ef,  # Upub
-        'p2wpkh': 0x045f1cf6,  # vpub
-        'p2wsh': 0x02575483,  # Vpub
-    }
-    XPUB_HEADERS_INV = inv_dict(XPUB_HEADERS)
-
-    BURN_AMOUNTS = BurnAmounts(
-        IssueAssetBurnAmount=500,
-        ReissueAssetBurnAmount=100,
-        IssueSubAssetBurnAmount=100,
-        IssueUniqueAssetBurnAmount=5,
-        IssueMsgChannelAssetBurnAmount=100,
-        IssueQualifierAssetBurnAmount=1000,
-        IssueSubQualifierAssetBurnAmount=100,
-        IssueRestrictedAssetBurnAmount=1500,
-        AddNullQualifierTagBurnAmount=0.1
-    )
-
-    BURN_ADDRESSES = BurnAddresses(
-        IssueAssetBurnAddress='n1issueAssetXXXXXXXXXXXXXXXXWdnemQ',
-        ReissueAssetBurnAddress='n1ReissueAssetXXXXXXXXXXXXXXWG9NLd',
-        IssueSubAssetBurnAddress='n1issueSubAssetXXXXXXXXXXXXXbNiH6v',
-        IssueUniqueAssetBurnAddress='n1issueUniqueAssetXXXXXXXXXXS4695i',
-        IssueMsgChannelAssetBurnAddress='n1issueMsgChanneLAssetXXXXXXT2PBdD',
-        IssueQualifierAssetBurnAddress='n1issueQuaLifierXXXXXXXXXXXXUysLTj',
-        IssueSubQualifierAssetBurnAddress='n1issueSubQuaLifierXXXXXXXXXYffPLh',
-        IssueRestrictedAssetBurnAddress='n1issueRestrictedXXXXXXXXXXXXZVT9V',
-        AddNullQualifierTagBurnAddress='n1addTagBurnXXXXXXXXXXXXXXXXX5oLMH',
-        GlobalBurnAddress='n1BurnXXXXXXXXXXXXXXXXXXXXXXU1qejP'
-    )
-
-
 def all_subclasses(cls):
     """Return all (transitive) subclasses of cls."""
     res = set(cls.__subclasses__())
@@ -266,13 +177,9 @@ def all_subclasses(cls):
 NETS_LIST = tuple(all_subclasses(AbstractNet))
 
 # don't import net directly, import the module instead (so that net is singleton)
-net = RavencoinMainnet
+net = AvianMainnet
 
 
 def set_mainnet():
     global net
-    net = RavencoinMainnet
-
-def set_testnet():
-    global net
-    net = RavencoinTestnet
+    net = AvianMainnet

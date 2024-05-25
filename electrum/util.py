@@ -109,11 +109,7 @@ def base_units_list():
     return [constants.net.SHORT_NAME]
 
 
-# base_units = {'RVN':8} #, 'mBTC':5, 'bits':2, 'sat':0}
-# base_units_inverse = inv_dict(base_units)
-# base_units_list = ['RVN'] #, 'mBTC', 'bits', 'sat']  # list(dict) does not guarantee order
-
-DECIMAL_POINT_DEFAULT = 8  # RVN
+DECIMAL_POINT_DEFAULT = 8  # AVNS
 
 
 class UnknownBaseUnit(Exception):
@@ -678,6 +674,15 @@ def to_bytes(something, encoding="utf8") -> bytes:
 
 bfh = bytes.fromhex
 
+def bh2u(x: bytes) -> str:
+    """
+    str with hex representation of a bytes-like object
+
+    >>> x = bytes((1, 2, 10))
+    >>> bh2u(x)
+    '01020A'
+    """
+    return x.hex()
 
 def xor_bytes(a: bytes, b: bytes) -> bytes:
     size = min(len(a), len(b))
@@ -692,11 +697,11 @@ def user_dir():
     elif "ANDROID_DATA" in os.environ:
         return android_data_dir()
     elif os.name == "posix":
-        return os.path.join(os.environ["HOME"], ".electrum-ravencoin")
+        return os.path.join(os.environ["HOME"], ".electrum-avian")
     elif "APPDATA" in os.environ:
-        return os.path.join(os.environ["APPDATA"], "Electrum-Ravencoin")
+        return os.path.join(os.environ["APPDATA"], "Electrum-Avian")
     elif "LOCALAPPDATA" in os.environ:
-        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-Ravencoin")
+        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-Avian")
     else:
         # raise Exception("No home directory found in environment variables.")
         return
@@ -1000,23 +1005,19 @@ def age(
 
 
 mainnet_block_explorers = {
-    "rvn.cryptoscope.io": (
-        "https://rvn.cryptoscope.io/",
+    "explorer.avn.network": (
+        "https://explorer.avn.network/",
         {"tx": "tx/?txid=", "addr": "address/?address="},
     ),
-    "ravencoin.network": (
-        "https://ravencoin.network/",
+    "blockexplorer.avn.network": (
+        "https://blockexplorer.avn.network/",
         {"tx": "tx/", "addr": "address/"},
     ),
 }
 
 testnet_block_explorers = {
-    "rvn.cryptoscope.io": (
-        "https://rvnt.cryptoscope.io/",
-        {"tx": "tx/?txid=", "addr": "address/?address="},
-    ),
-    "ravencoin.network": (
-        "https://testnet.ravencoin.network/",
+    "testnet-explorer.avn.network": (
+        "testnet-explorer.avn.network",
         {"tx": "tx/", "addr": "address/"},
     ),
 }
@@ -1086,7 +1087,6 @@ ipfs_explorers = {
     "dweb.link": ("https://dweb.link", {"ipfs": "ipfs/"}),
     "cf-ipfs.com": ("https://cf-ipfs.com", {"ipfs": "ipfs/"}),
     "w3s.link": ("https://w3s.link", {"ipfs": "ipfs/"}),
-    "trustless-gateway.link": ("https://trustless-gateway.link", {"ipfs": "ipfs/"}),
     "nftstorage.link": ("https://nftstorage.link", {"ipfs": "ipfs/"}),
 }
 
@@ -1418,7 +1418,7 @@ def format_short_id(short_channel_id: Optional[bytes]):
 
 def make_aiohttp_session(proxy: Optional[dict], headers=None, timeout=None):
     if headers is None:
-        headers = {"User-Agent": "Electrum-Ravencoin"}
+        headers = {"User-Agent": "Electrum-Avian"}
     if timeout is None:
         # The default timeout is high intentionally.
         # DNS on some systems can be really slow, see e.g. #5337
@@ -1696,7 +1696,7 @@ def is_tor_socks_port(host: str, port: int) -> bool:
 
 AS_LIB_USER_I_WANT_TO_MANAGE_MY_OWN_ASYNCIO_LOOP = False  # used by unit tests
 
-_asyncio_event_loop = None  # type: Optional[asyncio.AbstractEventLoop]
+_asyncio_event_loop =  None  # type: Optional[asyncio.AbstractEventLoop]
 
 
 def get_asyncio_loop() -> asyncio.AbstractEventLoop:

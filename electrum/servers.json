@@ -1,21 +1,21 @@
 {
-    "rvn4lyfe.com": {
-      "pruning": "-",
-      "s": "50002",
-      "t": "50001",
-      "version": "1.11"
-    },
-    "aq7vuqykup2voklcrpqljf6jnjkzrouowsjfrmybdou5kdhrpr6sjjid.onion": {
-      "pruning": "-",
-      "s": "50002",
-      "t": "50001",
-      "version": "1.11"
-    },
-    "162.19.153.65": {
-      "pruning": "-",
-      "s": "50002",
-      "t": "50001",
-      "version": "1.11"
-    }
+  "electrum-us.avn.network": {
+    "pruning": "-",
+    "s": "50002",
+    "t": "50001",
+    "version": "1.10"
+  },
+  "electrum-eu.avn.network": {
+    "pruning": "-",
+    "s": "50002",
+    "t": "50001",
+    "version": "1.10"
+  },
+  "electrum-ca.avn.network": {
+    "pruning": "-",
+    "s": "50002",
+    "t": "50001",
+    "version": "1.10"
   }
+}
   

@@ -1,0 +1,23 @@
+# If you want Electrum to appear in a Linux app launcher ("start menu"), install this by doing:
+# sudo desktop-file-install electrum-avian.desktop
+# Note: This assumes $HOME/.local/bin is in your $PATH
+
+[Desktop Entry]
+Comment=Lightweight Avian Client
+Exec=electrum_avian %u
+GenericName[en_US]=Avian Wallet
+GenericName=Avian Wallet
+Icon=electrum
+Name[en_US]=Electrum Avian Wallet
+Name=Electrum Avian Wallet
+Categories=Finance;Network;
+StartupNotify=true
+StartupWMClass=electrum_avian
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/avn
+Actions=Testnet;
+
+[Desktop Action Testnet]
+Exec=electrum_avian --testnet %u
+Name=Testnet mode

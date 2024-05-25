@@ -17,7 +17,7 @@ from electrum.i18n import _
 from electrum.keystore import Hardware_KeyStore
 from electrum.logging import get_logger
 from electrum.plugin import Device, runs_in_hwd_thread
-from electrum.transaction import PartialTransaction, Transaction, PartialTxInput
+from electrum.transaction import PartialTransaction, Transaction, PartialTxInput, Sighash
 from electrum.util import bfh, UserFacingException, versiontuple
 from electrum.wallet import Standard_Wallet
 
@@ -315,7 +315,7 @@ class Ledger_Client(HardwareClientBase, ABC):
                     
         transport = ledger_bitcoin.TransportClient('hid', hid=hid_device)
         
-        # RVN is only on legacy
+        # AVN is only on legacy
         return Ledger_Client_Legacy(hid_device, *args, **kwargs)
         try:
             cl = ledger_bitcoin.createClient(transport, chain=get_chain())
@@ -705,7 +705,7 @@ class Ledger_Client_Legacy(Ledger_Client):
                     singleInput = [chipInputs[inputIndex]]
                     self.dongleObject.startUntrustedTransaction(False, 0,
                                                                 singleInput, redeemScripts[inputIndex], version=tx.version)
-                    inputSignature = self.dongleObject.untrustedHashSign(inputsPaths[inputIndex], pin, lockTime=tx.locktime)
+                    inputSignature = self.dongleObject.untrustedHashSign(inputsPaths[inputIndex], pin, lockTime=tx.locktime, sighashType=Sighash.ALL_FORKID)
                     inputSignature[0] = 0x30  # force for 1.4.9+
                     my_pubkey = inputs[inputIndex][4]
                     tx.add_signature_to_txin(txin_idx=inputIndex,
@@ -730,7 +730,7 @@ class Ledger_Client_Legacy(Ledger_Client):
                         self.handler.show_message(_("Confirmed. Signing Transaction..."))
                     else:
                         # Sign input with the provided PIN
-                        inputSignature = self.dongleObject.untrustedHashSign(inputsPaths[inputIndex], pin, lockTime=tx.locktime)
+                        inputSignature = self.dongleObject.untrustedHashSign(inputsPaths[inputIndex], pin, lockTime=tx.locktime, sighashType=Sighash.ALL_FORKID)
                         inputSignature[0] = 0x30  # force for 1.4.9+
                         my_pubkey = inputs[inputIndex][4]
                         tx.add_signature_to_txin(txin_idx=inputIndex,

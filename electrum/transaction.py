@@ -109,12 +109,21 @@ class Sighash(IntEnum):
     ALL = 1
     NONE = 2
     SINGLE = 3
+    FORKID = 0x40
     ANYONECANPAY = 0x80
+    ALL_FORKID = ALL + FORKID
+    NONE_FORKID = NONE + FORKID
+    NONE_FORKID_ANYONECANPAY = NONE + FORKID + ANYONECANPAY
+    SINGLE_FORKID = SINGLE + FORKID
+    SINGLE_FORKID_ANYONECANPAY = SINGLE + FORKID + ANYONECANPAY
+    ALL_ANYONECANPAY = ALL + ANYONECANPAY + FORKID
+    NONE_ANYONECANPAY = NONE + ANYONECANPAY + FORKID
+    SINGLE_ANYONECANPAY = SINGLE + ANYONECANPAY + FORKID    
 
     @classmethod
     def is_valid(cls, sighash: int) -> bool:
         for flag in Sighash:
-            for base_flag in [Sighash.ALL, Sighash.NONE, Sighash.SINGLE]:
+            for base_flag in [Sighash.ALL, Sighash.NONE, Sighash.SINGLE, Sighash.FORKID]:
                 if (flag & ~0x1f | base_flag) == sighash:
                     return True
         return False
@@ -774,6 +783,18 @@ def parse_input(vds: BCDataStream) -> TxInput:
     prevout = TxOutpoint(txid=prevout_hash, out_idx=prevout_n)
     script_sig = vds.read_bytes(vds.read_compact_size())
     nsequence = vds.read_uint32()
+    # Calculate the sig hash type
+
+    sigtype = None
+    try:
+        # Theoretically the script_sig is the very end of the first stack push
+        sigtype = next(iter(script_GetOp(script_sig)))[1][-1]
+        sigtype += Sighash.FORKID
+        if sigtype not in list(map(int, Sighash)):
+            raise Exception("invalid sighash: {}".format(sigtype))
+    except Exception:
+        sigtype = None
+
     return TxInput(prevout=prevout, script_sig=script_sig, nsequence=nsequence)
 
 
@@ -2189,7 +2210,7 @@ class PartialTransaction(Transaction):
         inputs = self.inputs()
         outputs = self.outputs()
         txin = inputs[txin_index]
-        sighash = txin.sighash if txin.sighash is not None else Sighash.ALL
+        sighash = txin.sighash if txin.sighash is not None else Sighash.ALL_FORKID
         if not Sighash.is_valid(sighash):
             raise Exception(f"SIGHASH_FLAG ({sighash}) not supported!")
         nHashType = int_to_hex(sighash, 4)
@@ -2271,7 +2292,7 @@ class PartialTransaction(Transaction):
     def sign_txin(self, txin_index, privkey_bytes, wallet: 'Abstract_Wallet', *, bip143_shared_txdigest_fields=None, locking_script_overrides=None) -> str:
         txin = self.inputs()[txin_index]
         txin.validate_data(for_signing=True)
-        sighash = txin.sighash if txin.sighash is not None else Sighash.ALL
+        sighash = txin.sighash if txin.sighash is not None else Sighash.ALL_FORKID
         pre_hash = sha256d(bfh(self.serialize_preimage(txin_index, wallet,
                                                        bip143_shared_txdigest_fields=bip143_shared_txdigest_fields, locking_script_overrides=locking_script_overrides)))
         privkey = ecc.ECPrivkey(privkey_bytes)

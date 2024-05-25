@@ -3,18 +3,19 @@ protobuf>=3.20,<4
 qdarkstyle>=2.7
 aiorpcx>=0.22.0,<0.23
 aiohttp>=3.3.0,<4.0.0
-aiohttp_socks>=0.3
+aiohttp_socks>=0.8.4
 certifi
 bitstring
 attrs>=20.1.0
+jsonpatch
 
 # Note that we also need the dnspython[DNSSEC] extra which pulls in cryptography,
 # but as that is not pure-python it cannot be listed in this file!
 dnspython>=2.0
 
-x16r_hash @ git+https://github.com/brian112358/x16r_hash@d79211ee8b5d86a9709caefded79f318a1d9f3a8
-x16rv2_hash @ git+https://github.com/RavenCommunity/x16rv2_hash@f8a9ef9a185b4c900adea4628be9b08aaab343ba
-kawpow @ git+https://github.com/kralverde/cpp-kawpow@52cceb9d896a194ea21463f0cfbce754b8635944
+x16r_hash @ git+https://github.com/AvianNetwork/x16r_hash@b7faab42b3f1c2b113b3d119ed455de6b3037bb0
+x16rt_hash @ git+https://github.com/AvianNetwork/x16rt_hash@8a21e9e8714a803c46e75885db87efeb28b22915
+minotaurx_hash @ git+https://github.com/AvianNetwork/minotaurx_hash@19fb91bff8c9edbed73b784a61ba1f971439abf2
 
 ipfs-car-decoder==0.1.1 
 multiformats==0.3.1.post4
