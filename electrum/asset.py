@@ -224,7 +224,7 @@ def generate_create_script(address: str, asset: str, amount: int, divisions: int
                   f'{int_to_hex(len(asset))}{asset.encode().hex()}'
                   f'{int_to_hex(amount, 8)}{int_to_hex(divisions)}'
                   f"{'01' if reissuable else '00'}{'01' if associated_data else '00'}"
-                  f'{associated_data.hex() if associated_data else ""}')
+                  f'{associated_data.hex() if associated_data else ""}{int_to_hex(0)}')
     asset_script = construct_script([opcodes.OP_ASSET, asset_data, opcodes.OP_DROP])
     base_script = address_to_script(address)
     return base_script + asset_script
