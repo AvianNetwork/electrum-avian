@@ -1,7 +1,7 @@
 _(If you've come here looking to simply run Electrum Avian, you may download a prebuilt binary for
-[windows](https://github.com/AvianNetwork/electrum-avian/releases/download/v2.0.0/electrum-avian-v2.0.0-setup.exe),
-[linux](https://github.com/AvianNetwork/electrum-avian/releases/download/v2.0.0/electrum-avian-v2.0.0-x86_64.AppImage), and
-[mac](https://github.com/AvianNetwork/electrum-avian/releases/download/v2.0.0/electrum-avian-v2.0.0.dmg)
+[windows](https://github.com/AvianNetwork/electrum-avian/releases/download/v2.0.1/electrum-avian-v2.0.1-setup.exe),
+[linux](https://github.com/AvianNetwork/electrum-avian/releases/download/v2.0.1/electrum-avian-v2.0.1-x86_64.AppImage), and
+[mac](https://github.com/AvianNetwork/electrum-avian/releases/download/v2.0.1/electrum-avian-v2.0.1.dmg)
 [or see other options](https://github.com/AvianNetwork/electrum-avian/releases/latest).)_
 
 # Electrum Avian - Lightweight Avian client
